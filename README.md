@@ -6,7 +6,7 @@ Repository to track the progress for the Big Data Analytics project.
 
 # Connecting to NiFi from the terminal
 - `cd /opt/nifi`
-- - `nifi.sh start/stop/restart/status`
+- `nifi.sh start/stop/restart/status`
 
 # Connecting to NiFi via https 
 - `https://100.98.48.77:8443/nifi/` and provide appropriate login and password

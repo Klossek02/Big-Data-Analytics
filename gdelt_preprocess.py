@@ -22,6 +22,7 @@ def gdelt_preprocessing():
         .getOrCreate()
         
     spark.sparkContext.setLogLevel("WARN")
+    print("INFO: Spark session has been created.")
 
     # SCHEMA DEFINITION
     # DISCLAIMER: I removed dots from column names. For instance, V2.1DATE --> V21DATE, for Spark compatibility
@@ -57,6 +58,7 @@ def gdelt_preprocessing():
 
     # LOADING DATA  
     try:
+        print(f"INFO: Loading data from {INPUT_PATH}...")
         df_raw = spark.read \
             .option("delimiter", "\t") \
             .option("header", "false") \
@@ -65,6 +67,14 @@ def gdelt_preprocessing():
             
         
         df_silver = df_raw.toDF(*gdelt_cols) # here, we apply the col names to the raw data (_c0, _c1 -> GKGRECORDID, ...)
+
+
+        col_count = len(df_silver.columns)
+        print("-" * 40)
+        print(f"INFO: Schema applied.")
+        print(f"INFO: Column count detected: {col_count}")
+        print("-" * 40)
+        # -----------------------------------------------------
         
         # DATA TRANSFORMATION 
         
@@ -72,7 +82,7 @@ def gdelt_preprocessing():
         # data: string '20241101014500' -> timestamp
         # tone: string '2.4,-1.2,3.5...' -> to float 
         # we selct and change the names of key cols 
-
+        print("INFO: Transforming data...")
         df_transformed = df_silver \
             .withColumn("PublicationTimestamp", to_timestamp(col("V21DATE"), "yyyyMMddHHmmss")) \
             .withColumn("ToneArray", split(col("V15TONE"), ",")) \
@@ -100,16 +110,18 @@ def gdelt_preprocessing():
         )
 
         row_count = df_filtered.count()
+        print(f"INFO: Valid records found: {row_count}")
         
         if row_count > 0:
             print("-" * 60)
-            print("Top 5 exemplary data:")
-            df_filtered.select("RecordID", "PublicationTimestamp", "SourceCommonName", "Locations", "Persons", "Organizations", "Themes", "AvgTone").show(5, truncate=False)
+            print("INFO: SAMPLE RECORD PREVIEW:")
+            df_filtered.show(1, vertical=True, truncate=False)
             print("-" * 60)
             
+            print(f"INFO: Saving to {OUTPUT_PATH}...")
             df_filtered.write.mode("overwrite").parquet(OUTPUT_PATH)
             
-            print("SUCCESS: data has been saved in silver layer.")
+            print("SUCCESS: Data has been saved in silver layer.")
         else:
             print("WARNING: No data to save after preprocessing.")
 
@@ -119,7 +131,6 @@ def gdelt_preprocessing():
         sys.exit(1)
     finally:
         spark.stop()
-
 
 if __name__ == "__main__":
     gdelt_preprocessing()

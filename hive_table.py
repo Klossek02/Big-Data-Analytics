@@ -14,7 +14,7 @@ conn = hive.Connection(
 cursor = conn.cursor()
 
 create_table_sql = """
-CREATE EXTERNAL TABLE wikipedia_recentchanges_avro (
+CREATE EXTERNAL TABLE wikipedia_edits (
   id BIGINT,
   type STRING,
   namespace INT,
@@ -46,7 +46,7 @@ CREATE EXTERNAL TABLE wikipedia_recentchanges_avro (
 )
 PARTITIONED BY (event_date STRING)
 STORED AS AVRO
-LOCATION '/big-data/hive/warehouse/wikipedia_recentchanges'
+LOCATION '/big-data/hive/warehouse/wikipedia_edits'
 TBLPROPERTIES (
   'avro.schema.literal'='{
     "type": "record",
@@ -87,7 +87,7 @@ TBLPROPERTIES (
 
 try:
     cursor.execute(create_table_sql)
-    print("Hive table 'wikipedia_recentchanges' created successfully.")
+    print("Hive table 'wikipedia_edits' created successfully.")
 except Exception as e:
     print("Error creating table:", e, file=sys.stderr)
 finally:

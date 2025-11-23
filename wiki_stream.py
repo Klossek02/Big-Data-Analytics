@@ -15,6 +15,9 @@ RECONNECT_TIMEOUT = 60
 stream = EventStreams(streams=STREAMS)
 stream.register_filter(server_name=WIKI_SERVER, type=FILTER_TYPE)
 
+# to make it get historical data
+# https://stream.wikimedia.org/v2/stream/recentchange?since=2025-11-22T00:00:00Z
+
 while True:
     try:
         for change in stream:

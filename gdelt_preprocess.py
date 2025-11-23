@@ -16,14 +16,12 @@ def gdelt_preprocessing():
     INPUT_PATH = "/big-data/hive/warehouse/gdelt_bronze"
     OUTPUT_PATH = "/big-data/hive/warehouse/gdelt_silver"
     
-    
     spark = SparkSession.builder \
         .appName(APP_NAME) \
         .enableHiveSupport() \
         .getOrCreate()
         
     spark.sparkContext.setLogLevel("WARN")
-    
 
     # SCHEMA DEFINITION
     # DISCLAIMER: I removed dots from column names. For instance, V2.1DATE --> V21DATE, for Spark compatibility
@@ -57,7 +55,6 @@ def gdelt_preprocessing():
         "V2EXTRASXML"                   
     ]
 
-
     # LOADING DATA  
     try:
         df_raw = spark.read \
@@ -69,14 +66,13 @@ def gdelt_preprocessing():
         
         df_silver = df_raw.toDF(*gdelt_cols) # here, we apply the col names to the raw data (_c0, _c1 -> GKGRECORDID, ...)
         
-
         # DATA TRANSFORMATION 
         
         # create dataframe: 
         # data: string '20241101014500' -> timestamp
         # tone: string '2.4,-1.2,3.5...' -> to float 
         # we selct and change the names of key cols 
-        
+
         df_transformed = df_silver \
             .withColumn("PublicationTimestamp", to_timestamp(col("V21DATE"), "yyyyMMddHHmmss")) \
             .withColumn("ToneArray", split(col("V15TONE"), ",")) \
@@ -93,7 +89,7 @@ def gdelt_preprocessing():
                 col("ToneArray").getItem(0).cast("float").alias("AvgTone"),       # avgerage tone 
                 col("ToneArray").getItem(1).cast("float").alias("PositiveScore"), # % positive words
                 col("ToneArray").getItem(2).cast("float").alias("NegativeScore"), # % negative words
-                col("ToneArray").getItem(3).cast("float").alias("Polarity")       # polarity 
+                col("ToneArray").getItem(3).cast("float").alias("Polarity")       # polarity    
             )
 
         # FILTERING
@@ -103,12 +99,13 @@ def gdelt_preprocessing():
             (col("Persons").isNotNull() | col("Organizations").isNotNull() | col("Locations").isNotNull())
         )
 
-
         row_count = df_filtered.count()
         
         if row_count > 0:
+            print("-" * 60)
             print("Top 5 exemplary data:")
-            df_filtered.select("PublicationTimestamp", "SourceCommonName", "AvgTone").show(5, truncate = False)
+            df_filtered.select("RecordID", "PublicationTimestamp", "SourceCommonName", "Locations", "Persons", "Organizations", "Themes", "AvgTone").show(5, truncate=False)
+            print("-" * 60)
             
             df_filtered.write.mode("overwrite").parquet(OUTPUT_PATH)
             

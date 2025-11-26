@@ -45,43 +45,10 @@ CREATE EXTERNAL TABLE wikipedia_edits (
   parsed_comment STRING
 )
 PARTITIONED BY (event_date STRING)
-STORED AS AVRO
+STORED AS PARQUET
 LOCATION '/big-data/hive/warehouse/wikipedia_edits'
 TBLPROPERTIES (
-  'avro.schema.literal'='{
-    "type": "record",
-    "name": "wikipedia_recentchanges",
-    "fields": [
-      {"name": "id", "type": "long"},
-      {"name": "type", "type": "string"},
-      {"name": "namespace", "type": "int"},
-      {"name": "title", "type": "string"},
-      {"name": "page_url", "type": "string"},
-      {"name": "comment", "type": "string"},
-      {"name": "event_timestamp", "type": "long"},
-      {"name": "username", "type": "string"},
-      {"name": "bot", "type": "boolean"},
-      {"name": "notify_url", "type": "string"},
-      {"name": "minor", "type": "boolean"},
-      {"name": "uri", "type": "string"},
-      {"name": "request_id", "type": "string"},
-      {"name": "meta_id", "type": "string"},
-      {"name": "domain", "type": "string"},
-      {"name": "stream", "type": "string"},
-      {"name": "topic", "type": "string"},
-      {"name": "partition_num", "type": "int"},
-      {"name": "offset_used", "type": "long"},
-      {"name": "length_old", "type": "int"},
-      {"name": "length_new", "type": "int"},
-      {"name": "revision_old", "type": "long"},
-      {"name": "revision_new", "type": "long"},
-      {"name": "server_url", "type": "string"},
-      {"name": "server_name", "type": "string"},
-      {"name": "server_script_path", "type": "string"},
-      {"name": "wiki", "type": "string"},
-      {"name": "parsed_comment", "type": "string"}
-    ]
-  }'
+  'parquet.compression'='SNAPPY'
 )
 """
 

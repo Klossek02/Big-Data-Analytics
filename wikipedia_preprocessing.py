@@ -27,8 +27,8 @@ def wikipedia_preprocessing():
 
     # loading data
     try:
-        # Load raw Avro
-        df_raw = spark.read.format("avro").load(INPUT_PATH)
+        # Load raw Parquet
+        df_raw = spark.read.format("parquet").load(INPUT_PATH)
 
         # Convert 'event_timestamp' (unix long) to timestamp
         df_transformed = df_raw.withColumn("EventTimestamp", to_timestamp(from_unixtime(col("event_timestamp")))) \
@@ -88,4 +88,5 @@ def wikipedia_preprocessing():
         spark.stop()
 
 if __name__ == "__main__":
+
     wikipedia_preprocessing()

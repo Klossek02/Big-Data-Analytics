@@ -1,24 +1,24 @@
 from pyspark.sql import SparkSession
-from pyspark.sql.functions import col, rand, to_timestamp, date_trunc, count, lit, explode, array, expr
+from pyspark.sql.functions import col, to_timestamp, date_trunc, count
 from pyspark.ml.feature import VectorAssembler, StandardScaler
 from pyspark.ml import Pipeline
 from pyspark.ml.regression import LinearRegression, RandomForestRegressor, GBTRegressor, GeneralizedLinearRegression, DecisionTreeRegressor
 from pyspark.ml.evaluation import RegressionEvaluator
 import sys
 
-def train():
+def train_real_only():
     spark = SparkSession.builder \
-        .appName("GDELT_Wiki_train") \
+        .appName("GDELT_Wiki_Real_Only") \
         .config("spark.sql.shuffle.partitions", "10") \
         .getOrCreate()
 
     spark.sparkContext.setLogLevel("ERROR")
 
     print("\n" + "="*80)
-    print("INFO: Loading data with SMART AUGMENTATION (Jittering)...")
+    print("INFO: Loading data...")
     print("="*80)
 
-    # GDELT
+    # GDELT 
     try:
         df_gdelt = spark.read.parquet("/big-data/hive/warehouse/gdelt_silver")
 
@@ -61,43 +61,22 @@ def train():
         real_df = df_gdelt_agg.join(df_wiki_agg, on="time_window", how="left")
         real_df = real_df.na.fill({"TargetEdits": 0})
 
-
-        feature_cols = ["AvgTone", "PositiveScore", "NegativeScore"] # removing features with too many missing values
+        feature_cols = ["AvgTone", "PositiveScore", "NegativeScore"]
         real_df = real_df.dropna(subset=feature_cols)
     else:
         print("CRITICAL: Data load failed.")
         return
 
-    base_count = real_df.count()
-    print(f"DEBUG: Real base rows: {base_count}")
-
-    # SMART AUGMENTATION (Jittering) 
-    # if we have few data, we clone it with small noise to preserve correlation (jiterring)
-    target_min_rows = 300
-
+    # WITHOUT AUGMENTATION
     final_df = real_df
-
-    if base_count < target_min_rows and base_count > 0:
-        multiplication_factor = int(target_min_rows / base_count) + 1
-        print(f"INFO: Not enough data. Applying jittering (x{multiplication_factor})...")
-
-        augmented_df = real_df.withColumn("dummy", explode(array([lit(x) for x in range(multiplication_factor)])))
-
-        
-        augmented_df = augmented_df.withColumn("AvgTone", col("AvgTone") + (rand() - 0.5) * 0.5) \
-                                   .withColumn("PositiveScore", col("PositiveScore") + (rand() - 0.5) * 0.5) \
-                                   .withColumn("NegativeScore", col("NegativeScore") + (rand() - 0.5) * 0.5) \
-                                   .withColumn("TargetEdits", col("TargetEdits") + (rand() - 0.5) * 1.0) \
-                                   .drop("dummy")
-
-        augmented_df = augmented_df.withColumn("TargetEdits", expr("CASE WHEN TargetEdits < 0 THEN 0 ELSE TargetEdits END"))
-
-        final_df = augmented_df
-
     final_count = final_df.count()
-    print(f"DEBUG: Final training set size: {final_count}")
+    print(f"DEBUG: Final Real Data rows: {final_count}")
 
-    # TRAINING 
+    if final_count < 2:
+        print("CRITICAL: Not enough data to split into train/test (needs > 1 row). Stopping.")
+        return
+
+    # TRAINING
     train_data, test_data = final_df.randomSplit([0.8, 0.2], seed=42)
 
     assembler = VectorAssembler(inputCols=["AvgTone", "PositiveScore", "NegativeScore"], outputCol="features_raw")
@@ -105,11 +84,15 @@ def train():
 
     def get_metrics(predictions):
         evaluator = RegressionEvaluator(labelCol="TargetEdits")
-        rmse = evaluator.evaluate(predictions, {evaluator.metricName: "rmse"})
-        mse = evaluator.evaluate(predictions, {evaluator.metricName: "mse"})
-        mae = evaluator.evaluate(predictions, {evaluator.metricName: "mae"})
-        r2 = evaluator.evaluate(predictions, {evaluator.metricName: "r2"})
-        return rmse, mse, mae, r2
+
+        try:
+            rmse = evaluator.evaluate(predictions, {evaluator.metricName: "rmse"})
+            mse = evaluator.evaluate(predictions, {evaluator.metricName: "mse"})
+            mae = evaluator.evaluate(predictions, {evaluator.metricName: "mae"})
+            r2 = evaluator.evaluate(predictions, {evaluator.metricName: "r2"})
+            return rmse, mse, mae, r2
+        except:
+            return 0.0, 0.0, 0.0, 0.0
 
     results = {}
     models_map = {}
@@ -143,15 +126,14 @@ def train():
         except Exception as e:
             print(f"Failed to train {name}: {e}")
 
- 
+    
     print("\n" + "="*105)
-    print(f"FINAL RESULTS (Real data + jitter augmentation)")
+    print(f"FINAL RESULTS")
     print("="*105)
     print(f"| {'Model name':<22} | {'RMSE':<12} | {'MSE':<12} | {'MAE':<12} | {'R2':<12} |")
     print("-" * 105)
 
     best_name = ""
-    best_rmse = float('inf') 
     best_r2 = float('-inf')
 
     for name, (rmse, mse, mae, r2) in results.items():
@@ -164,12 +146,7 @@ def train():
     print("="*105)
     print(f"\nWINNER: {best_name.upper()}")
 
-    if best_name:
-        model_path = "/big-data/hive/warehouse/best_model"
-        models_map[best_name].write().overwrite().save(model_path)
-        print(f"SUCCESS: the best model has been saved to {model_path}")
-
     spark.stop()
 
 if __name__ == "__main__":
-    train()
+    train_real_only()

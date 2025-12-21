@@ -1,0 +1,38 @@
+<configuration>
+    <!-- Where Hive stores tables in HDFS -->
+    <property>
+        <name>hive.metastore.warehouse.dir</name>
+        <value>hdfs://100.98.48.77:9000/user/hive/warehouse</value>
+    </property>
+
+    <property>
+    <name>javax.jdo.option.ConnectionURL</name>
+    <value>jdbc:postgresql://localhost:5432/hive</value>
+    <description>Postgres metastore connection</description>
+  </property>
+
+  <property>
+    <name>javax.jdo.option.ConnectionDriverName</name>
+    <value>org.postgresql.Driver</value>
+  </property>
+
+  <property>
+    <name>javax.jdo.option.ConnectionUserName</name>
+    <value>hive</value>
+  </property>
+
+  <property>
+    <name>javax.jdo.option.ConnectionPassword</name>
+    <value>hivepassword</value>
+  </property>
+
+  <property>
+    <name>datanucleus.schema.autoCreateAll</name>
+    <value>false</value>
+  </property>
+  <property>
+    <name>hive.parquet.use-column-names</name>
+    <value>true</value>
+  <description>Use column names instead of positions when reading/writing Parquet files</description>
+</property>
+</configuration>

@@ -14,7 +14,7 @@ This project implements a Lambda Architecture to analyze and predict the intensi
 * **Batch layer:** Apache Spark MLlib (model training on HDFS/Hive data)
 * **Serving layer:** Elasticsearch and Kibana
 
-## Repository structure
+## 2. Repository structure
 ```
 ├── EDA/                     # Folder for Exploratory Data Analysis (EDA) .ipynb files, made for Milestone 3.
 ├── configs/                 # Essential cluster configuration files for Hadoop, Spark, Kafka, NiFi.
@@ -35,7 +35,7 @@ This project implements a Lambda Architecture to analyze and predict the intensi
 └── README.md                # Detailed guide on description and environment config.
 ```
 
-## 2. System requirements and prerequisites 
+## 3. System requirements and prerequisites 
 * **OS:** Linux (Ubuntu 22.04 LTS recommended)
 * **Java:** OpenJDK 8 or 11
 * **Python:** 3.8+
@@ -69,15 +69,55 @@ Target directory: `$NIFI_HOME/conf/`
 * `configs/nifi.properties` -> fundamental NiFi properties (ports, repository paths, etc.)
 
 
-## 3. How to run 
+## 4. Service startup
+Execute the following commands to start the Lambda Architecture components in the correct order.
 
-## Essential commands 
-# Connecting to a virtual machine from the terminal
+### Connecting to a virtual machine from the terminal
 - `ssh big-data@100.98.48.77` and provide appropriate login and password
 
-# Connecting to NiFi from the terminal
-- `cd /opt/nifi`
-- `nifi.sh start/stop/restart/status`
-
-# Connecting to NiFi via https 
+### Connecting to NiFi via https 
 - `https://100.98.48.77:8443/nifi/` and provide appropriate login and password
+
+### Start Hadoop (HDFS and YARN)
+```bash
+# Start NameNode and DataNodes
+start-dfs.sh
+
+# Start ResourceManager and NodeManagers
+start-yarn.sh
+
+# Verify processes
+jps
+# Expected output should include: NameNode, DataNode, SecondaryNameNode, ResourceManager, NodeManager
+```
+### Start Hive 
+```bash
+# Run Hive Metastore as a background service
+hive --service metastore &
+```
+
+### Start Apache Kafka (Zookeeper + Broker)
+```bash
+# Start Zookeeper
+$KAFKA_HOME/bin/zookeeper-server-start.sh -daemon $KAFKA_HOME/config/zookeeper.properties
+
+# Start Kafka Broker
+$KAFKA_HOME/bin/kafka-server-start.sh -daemon $KAFKA_HOME/config/server.properties
+
+# Create required topic (if not exist)
+$KAFKA_HOME/bin/kafka-topics.sh --create --topic gdelt-events --bootstrap-server localhost:9092 --partitions 1 --replication-factor 1
+$KAFKA_HOME/bin/kafka-topics.sh --create --topic wikipedia.edits --bootstrap-server localhost:9092 --partitions 1 --replication-factor 1
+```
+
+### Start Apache NiFi
+```bash
+$NIFI_HOME/bin/nifi.sh start
+
+# For stopping, restarting, and seeing status
+$NIFI_HOME/bin/nifi.sh stop/restart/status
+```
+
+### Start Elasticsearch
+```bash
+sudo systemctl start elasticsearch
+```

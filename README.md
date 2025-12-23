@@ -29,7 +29,7 @@ This project implements a Lambda Architecture to analyze and predict the intensi
 │   ├── model_training_debug.py # ML training script with verbose debugging.
 │   ├── model_training_no_augmentation.py # ML training script using only real data.
 │   ├── streaming_to_es.py   # Real-time streaming job with Elasticsearch sink.
-│   ├── wiki_stream.py       # Script for listening to Wikipedia changes stream.
+│   ├── wiki_stream.py       # Script for listening to the Wikipedia changes stream.
 │   └── wikipedia_preprocessing.py # Spark batch job to preprocess raw Wikipedia data.
 ├── various/                 # Miscellaneous files.
 └── README.md                # Detailed guide on description and environment config.
@@ -130,7 +130,7 @@ Or, if you want to start everything at once, launch the following script:
 ```
 ./start.sh
 
-# For checking whether all the services has started
+# For checking whether all the services have started
 jps 
 ```
 
@@ -156,9 +156,9 @@ pip install -r requirements.txt
 ```
 
 ### Running the streaming pipeline 
-- 1. Start the data producer for simulation:
+1. Start the data producer for simulation:
 ```python3 feed_kafka.py```
-- 2. Submit the Spark streaming job:
+2. Submit the Spark streaming job:
 ```
 /opt/spark/bin/spark-submit \
   --packages org.apache.spark:spark-sql-kafka-0-10_2.12:3.5.0 \

@@ -15,44 +15,24 @@ This project implements a Lambda Architecture to analyze and predict the intensi
 * **Serving layer:** Elasticsearch and Kibana
 
 ## Repository structure
-
-* **`/EDA`** - folder for Exploratory Data Analysis (EDA) .ipynb files, made for Milestone 3.  
-* **`/configs`** - essential cluster configuration files for Hadoop, Spark, Kafka, NiFi.
-* **`/nifi_flows`** - Apache NiFi flow definitions (.xml) for GDELT and Wikipedia pipelines.
-* **`/src`** - source code for Spark jobs and Python scripts.
-    * `feed_kafka.py` - script generating mock data that pretends to be a news stream from the GDELT system for test purposes.
-    * `gdelt_preprocess.py` - script for Spark batch job to preprocess raw GDELT data previously downloaded to HDFS/Hive.
-    * `gdelt_preprocessing.py`- script for raw GDELT data processing, but tested locally.
-    * `hive_table.py` - script which connects to the Hive server and executes the `SQL CREATE EXTERNAL TABLE` command.
-    * `inspect_model.py` - script for looking inside a trained model.
-    * `model_training.py` - script for training our machine learning (ML) models. 
-    * `model_training_debug.py` - script for training our ML models with the addition of more sophisticated debug commands. 
-    * `model_training_no_augmentation.py` - script for training our ML models without augmentation logic provided. 
-    * `streaming_to_es.py` - script for a real-time streaming job with an Elasticsearch sink.
-    * `wiki_stream.py` - script for data "listening" from Wikipedia. 
-    * `wikipedia_preprocessing.py` - script for Spark batch job to preprocess raw Wikipedia data previously downloaded to HDFS/Hive.
-* **`/various`** - for miscallenous files. 
-* **`README.md` - detailed guide on the description and configuring the environment.
-
-
 ```
 ├── EDA/ - folder for Exploratory Data Analysis (EDA) .ipynb files, made for Milestone 3.   
 ├── configs/ - essential cluster configuration files for Hadoop, Spark, Kafka, NiFi. 
 ├── nifi_flows/ - Apache NiFi flow definitions (.xml) for GDELT and Wikipedia pipelines. 
 ├── src/ - source code for Spark jobs and Python scripts. 
-│   ├── feed_kafka.py
-│   ├── gdelt_preprocess.py
-│   ├── gdelt_preprocessing.py
-│   ├── hive_table.py
-│   ├── inspect_model.py
-│   ├── model_training.py
-│   ├── model_training_debug.py
-│   ├── model_training_no_augmentation.py
-│   ├── streaming_to_es.py
-│   ├── wiki_stream.py
-│   └── wikipedia_preprocessing.py
-├── various/
-└── README.md
+│   ├── feed_kafka.py  - script generating mock data that pretends to be a news stream from the GDELT system for test purposes.
+│   ├── gdelt_preprocess.py - script for Spark batch job to preprocess raw GDELT data previously downloaded to HDFS/Hive.
+│   ├── gdelt_preprocessing.py - script for raw GDELT data processing, but tested locally. 
+│   ├── hive_table.py - script which connects to the Hive server and executes the `SQL CREATE EXTERNAL TABLE` command.
+│   ├── inspect_model.py - script for looking inside a trained model. 
+│   ├── model_training.py - script for training our machine learning (ML) models.  
+│   ├── model_training_debug.py - script for training our ML models with the addition of more sophisticated debug commands.  
+│   ├── model_training_no_augmentation.py - script for training our ML models without augmentation logic provided. 
+│   ├── streaming_to_es.py - script for a real-time streaming job with an Elasticsearch sink. 
+│   ├── wiki_stream.py - script for data "listening" from Wikipedia.  
+│   └── wikipedia_preprocessing.py  - script for Spark batch job to preprocess raw Wikipedia data previously downloaded to HDFS/Hive.
+├── various/ - for miscellaneous files. 
+└── README.md - detailed guide on the description and configuring the environment.
 ```
 
 

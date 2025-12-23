@@ -7,7 +7,7 @@ Repository to track the progress for the Big Data Analytics project.
 ## Project overview
 This project implements a Lambda Architecture to analyze and predict the intensity of Wikipedia editing activity in real-time based on global news events (GDELT Project). The system correlates sentiment and volume of global news with edit spikes on specific Wikipedia pages to detect potential "edit wars".
 
-### System architecture
+### 1. System architecture
 * **Ingestion:** Apache NiFi (fetching GDELT and Wikipedia streams)
 * **Message broker:** Apache Kafka (topics: `gdelt-events`, `wikipedia.edits`)
 * **Speed layer:** Apache Spark structured streaming (real-time inference)
@@ -35,9 +35,41 @@ This project implements a Lambda Architecture to analyze and predict the intensi
 └── README.md                # Detailed guide on description and environment config.
 ```
 
-## Prerequisities 
+## 2. System requirements and prerequisites 
+* **OS:** Linux (Ubuntu 22.04 LTS recommended)
+* **Java:** OpenJDK 8 or 11
+* **Python:** 3.8+
+* **Network:** Tailscale 
 
-## How to run 
+### Component versions 
+The system relies on the following software versions:
+* **Apache Hadoop:** 3.3.6
+* **Apache Spark:** 3.5.0
+* **Apache Kafka:** 3.5.0 (Scala 2.12)
+* **Apache NiFi:** 1.23.2
+* **Elasticsearch and Kibana:** 8.13.x
+
+### Configuration management
+As mentioned, critical configuration files are versioned in the `configs/` directory of this repository. To provision the environment, symlink or copy these files to their respective service configuration directories.
+
+### Hadoop and YARN
+Target directory: `$HADOOP_HOME/etc/hadoop/`
+* `configs/core-site.xml` -> system core settings (HDFS address)
+* `configs/hdfs-site.xml`  -> HDFS replication and path settings
+* `configs/hive-site.xml`  -> Hive replication and path settings
+* `configs/yarn-site.xml` -> ResourceManager and NodeManager config
+* `configs/mapred-site.xml` -> MapReduce framework settings
+
+### Apache Spark
+Target directory: `$SPARK_HOME/conf/`
+* `configs/spark-defaults.conf` -> default execution settings (executor memory, driver settings, etc.)
+
+### Apache NiFi
+Target directory: `$NIFI_HOME/conf/`
+* `configs/nifi.properties` -> fundamental NiFi properties (ports, repository paths, etc.)
+
+
+## 3. How to run 
 
 ## Essential commands 
 # Connecting to a virtual machine from the terminal

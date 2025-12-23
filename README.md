@@ -35,6 +35,29 @@ This project implements a Lambda Architecture to analyze and predict the intensi
 * **`README.md` - detailed guide on the description and configuring the environment.
 ```
 
+
+├── EDA/ - folder for Exploratory Data Analysis (EDA) .ipynb files, made for Milestone 3.   
+├── configs/ - essential cluster configuration files for Hadoop, Spark, Kafka, NiFi. 
+├── nifi_flows/ - Apache NiFi flow definitions (.xml) for GDELT and Wikipedia pipelines. 
+├── src/ - source code for Spark jobs and Python scripts. 
+│   ├── feed_kafka.py
+│   ├── gdelt_preprocess.py
+│   ├── gdelt_preprocessing.py
+│   ├── hive_table.py
+│   ├── inspect_model.py
+│   ├── model_training.py
+│   ├── model_training_debug.py
+│   ├── model_training_no_augmentation.py
+│   ├── streaming_to_es.py
+│   ├── wiki_stream.py
+│   └── wikipedia_preprocessing.py
+├── various/
+└── README.md
+
+## Prerequisities 
+
+## How to run 
+
 ## Essential commands 
 # Connecting to a virtual machine from the terminal
 - `ssh big-data@100.98.48.77` and provide appropriate login and password

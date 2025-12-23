@@ -107,6 +107,10 @@ $KAFKA_HOME/bin/kafka-server-start.sh -daemon $KAFKA_HOME/config/server.properti
 # Create required topic (if not exist)
 $KAFKA_HOME/bin/kafka-topics.sh --create --topic gdelt-events --bootstrap-server localhost:9092 --partitions 1 --replication-factor 1
 $KAFKA_HOME/bin/kafka-topics.sh --create --topic wikipedia.edits --bootstrap-server localhost:9092 --partitions 1 --replication-factor 1
+
+# Launch consumer
+/opt/kafka/bin/kafka-console-consumer.sh --bootstrap-server localhost:9092 --topic gdelt-events --from-beginning
+/opt/kafka/bin/kafka-console-consumer.sh --bootstrap-server localhost:9092 --topic wikipedia.edits --from-beginning
 ```
 
 ### Start Apache NiFi
@@ -121,3 +125,43 @@ $NIFI_HOME/bin/nifi.sh stop/restart/status
 ```bash
 sudo systemctl start elasticsearch
 ```
+
+Or, if you want to start everything at once, launch the following script:
+```
+./start.sh
+
+# For checking whether all the services has started
+jps 
+```
+
+
+## Analytical module and streaming
+### Python environment 
+
+1. Launch the virtual environment:
+```
+source env/bin/activate  # for GDELT-related operations 
+source wikienv/bin/activate # for Wiki-related operations 
+```
+
+2. Install required dependencies using pip:
+```bash
+pip install -r requirements.txt
+# Key libraries: pyspark, elasticsearch<9.0.0, kafka-python, numpy
+```
+
+3. Launch one of the model scripts:
+```
+/opt/spark/bin/spark-submit --master local[*] train_model.py 2> /dev/null
+```
+
+### Running the streaming pipeline 
+- 1. Start the data producer for simulation:
+```python3 feed_kafka.py```
+- 2. Submit the Spark streaming job:
+```
+/opt/spark/bin/spark-submit \
+  --packages org.apache.spark:spark-sql-kafka-0-10_2.12:3.5.0 \
+  streaming_to_es.py
+```
+

@@ -152,7 +152,7 @@ pip install -r requirements.txt
 
 3. Launch one of the model scripts:
 ```
-/opt/spark/bin/spark-submit --master local[*] train_model.py 2> /dev/null
+/opt/spark/bin/spark-submit --master local[*] train_model.py 2> /dev/null   # 2> /dev/null to make the output more eye-pleasing 
 ```
 
 ### Running the streaming pipeline 

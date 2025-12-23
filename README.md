@@ -4,10 +4,10 @@ Repository to track the progress for the Big Data Analytics project.
 **Team:** Byte Me Analytics  
 **Course:** Big Data Analytics @ WUT
 
-## Project overview
+## 1. Project overview
 This project implements a Lambda Architecture to analyze and predict the intensity of Wikipedia editing activity in real-time based on global news events (GDELT Project). The system correlates sentiment and volume of global news with edit spikes on specific Wikipedia pages to detect potential "edit wars".
 
-### 1. System architecture
+### System architecture
 * **Ingestion:** Apache NiFi (fetching GDELT and Wikipedia streams)
 * **Message broker:** Apache Kafka (topics: `gdelt-events`, `wikipedia.edits`)
 * **Speed layer:** Apache Spark structured streaming (real-time inference)

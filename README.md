@@ -1,5 +1,6 @@
 # Big-Data-Analytics
 Repository to track the progress for the Big Data Analytics project. 
+
 **Team:** Byte Me Analytics  
 **Course:** Big Data Analytics @ WUT
 

@@ -15,6 +15,7 @@ This project implements a Lambda Architecture to analyze and predict the intensi
 * **Serving layer:** Elasticsearch and Kibana
 
 ## Repository structure
+```
 * **`/EDA`** - folder for Exploratory Data Analysis (EDA) .ipynb files, made for Milestone 3.  
 * **`/configs`** - essential cluster configuration files for Hadoop, Spark, Kafka, NiFi.
 * **`/nifi_flows`** - Apache NiFi flow definitions (.xml) for GDELT and Wikipedia pipelines.
@@ -32,7 +33,7 @@ This project implements a Lambda Architecture to analyze and predict the intensi
     * `wikipedia_preprocessing.py` - script for Spark batch job to preprocess raw Wikipedia data previously downloaded to HDFS/Hive.
 * **`/various`** - for miscallenous files. 
 * **`README.md` - detailed guide on the description and configuring the environment.
-
+```
 
 ## Essential commands 
 # Connecting to a virtual machine from the terminal

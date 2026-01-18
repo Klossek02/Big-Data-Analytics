@@ -7,8 +7,11 @@ from elasticsearch import Elasticsearch
 MODEL_PATH = "/big-data/hive/warehouse/best_model"
 KAFKA_TOPIC = "gdelt-events"
 KAFKA_SERVER = "localhost:9092"
-ES_HOST = "http://localhost:9200"
+ES_HOST = "https://localhost:9200"
 ES_INDEX = "gdelt_real_predictions"  
+ES_USER = "elastic"
+ES_PASS = "jCIDwLC=+xE12BVMqBK5"
+#ES_CA_CERT = "/etc/elasticsearch/certs/http_ca.crt"  
 
 def send_to_es(batch_df, batch_id):
     if batch_df.count() == 0:
@@ -18,7 +21,16 @@ def send_to_es(batch_df, batch_id):
     records = batch_df.collect()
 
     try:
-        es = Elasticsearch(ES_HOST)
+        es = Elasticsearch(
+            [ES_HOST],
+            basic_auth=(ES_USER, ES_PASS),
+            verify_certs=False,      
+            ssl_show_warn=False
+            #ca_certs=ES_CA_CERT
+        )
+        
+        success_count = 0
+        
         for row in records:
             doc = {
                 "url": row.url,

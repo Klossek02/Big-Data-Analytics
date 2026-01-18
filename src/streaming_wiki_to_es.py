@@ -34,7 +34,7 @@ def send_to_es(batch_df, batch_id):
                 "user": row.user,
                 "page_title": row.page_title,
                 "type": row.type,
-                "timestamp": str(row.timestamp)
+                "timestamp": row.timestamp.isoformat()
             }
 
             # send to Elasticsearch

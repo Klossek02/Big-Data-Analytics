@@ -38,8 +38,9 @@ def send_to_es(batch_df, batch_id):
                 "pos_score": row.pos_score,
                 "neg_score": row.neg_score,
                 "predicted_edits": row.predicted_edits,
-                "timestamp": str(row.timestamp)
+                "timestamp": row.timestamp.isoformat()
             }
+            
             # send to Elasticsearch
             es.index(index=ES_INDEX, document=doc)
 

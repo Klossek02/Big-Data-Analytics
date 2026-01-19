@@ -156,8 +156,9 @@ pip install -r requirements.txt
 ```
 
 ### Running the streaming pipeline 
-1. Start the NIfi processors (GDELT_stream, Wiki_stream), Kafka server, and consumer with appropriate topic (either gdelt-events or wikipedia.edits), and launch the following Python file:
+1. Start the NiFi processors (GDELT_stream, Wiki_stream), Kafka server, and consumer with appropriate topic (either gdelt-events or wikipedia.edits), and launch the following Python file:
 ```python3 wiki_stream.py```
+
 2. Submit the Spark streaming jobs:
 ```
 spark-submit --packages org.apache.spark:spark-sql-kafka-0-10_2.12:3.3.2,org.elasticsearch:elasticsearch-spark-30_2.12:8.11.1 --driver-memory 512m --executor-memory 512m --num-executors 1 --executor-cores 1 --conf spark.sql.shuffle.partitions=2 streaming_wiki_to_es.py

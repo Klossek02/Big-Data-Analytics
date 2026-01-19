@@ -47,7 +47,7 @@ The system relies on the following software versions:
 * **Apache Spark:** 3.5.0
 * **Apache Kafka:** 3.5.0 (Scala 2.12)
 * **Apache NiFi:** 1.23.2
-* **Elasticsearch and Kibana:** 8.13.x
+* **Elasticsearch and Kibana:** 8.6.x (at least)
 
 ### Configuration management
 As mentioned, critical configuration files are versioned in the `configs/` directory of this repository. To provision the environment, symlink or copy these files to their respective service configuration directories.

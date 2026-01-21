@@ -29,6 +29,8 @@ This project implements a Lambda Architecture to analyze and predict the intensi
 │   ├── model_training_debug.py # ML training script with verbose debugging.
 │   ├── model_training_no_augmentation.py # ML training script using only real data.
 │   ├── streaming_to_es.py   # Real-time streaming job with Elasticsearch sink.
+│   ├── batch_gdelt_to_es.py # spark batch job to extract key entities from GDELT events and send them to elastic search
+│   ├── batch_wiki_to_es.py  # spark batch job to extract minor vs major events and send them to elastic search
 │   ├── wiki_stream.py       # Script for listening to the Wikipedia changes stream.
 │   └── wikipedia_preprocessing.py # Spark batch job to preprocess raw Wikipedia data.
 ├── various/                 # Miscellaneous files.
@@ -67,6 +69,11 @@ Target directory: `$SPARK_HOME/conf/`
 ### Apache NiFi
 Target directory: `$NIFI_HOME/conf/`
 * `configs/nifi.properties` -> fundamental NiFi properties (ports, repository paths, etc.)
+
+### ElasticSearch and Kibana
+Target directories: `etc/elasticsearch/` `etc/kibana/`
+* `configs/elasticsearch.yml` -> properties for elastic search
+* `configs/kibana.yml` -> properties for kibana
 
 
 ## 4. Service startup
